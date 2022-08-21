@@ -82,7 +82,7 @@ class excelGenerator {
     _rangeStyleRender(list) {
         let ws = this.workSheet
         list.map(item => {
-            let { range, formulae, style,type='expression' ,operator,text} = item
+            let { range, formulae=["1=1"], style,type='expression' ,operator,text} = item
             ws.addConditionalFormatting({
                 ref: range,
                 rules: [

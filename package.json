@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "comment": "^0.0.2",
     "exceljs": "^4.3.0",
-    "file-saver": "^2.0.5"
+    "file-saver": "^2.0.5",
+    "momment": "^0.0.1"
   },
   "name": "exceljs",
   "version": "1.0.0",
@@ -12,5 +14,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "moment": "^2.29.4"
+  }
 }

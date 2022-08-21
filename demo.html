@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>exceljs测试</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./js/exceljs.min.js"></script>
+    <!-- <script src="./js/exceljs.js"></script> -->
+    <script src="./js/FileSaver.min.js"></script>
+    <script src="./js/excelGenerator.js"></script>
+</head>
+
+<body>
+    <button id="cs">点击测试</button>
+    <script>
+        let state = {
+            columns: [
+                {
+                    title: "序号",
+                    dataIndex: "index",
+                    width: 100
+                },
+                {
+                    title: "姓名",
+                    dataIndex: "name",
+                    width: 200
+                },
+                {
+                    title: "年龄",
+                    dataIndex: "age",
+                    // numFmt = '0.00%'
+                },
+                {
+                    title: "住址",
+                    dataIndex: "address",
+                },
+                {
+                    title: "出生日期",
+                    dataIndex: "birthDate",
+                }
+            ],
+            dataSource: [
+                {
+                    index: "1",
+                    name: "chenchen",
+                    age: 0.6,
+                    address: "西湖区湖底公园1号",
+                    birthDate: "2021-03-01"
+                },
+                {
+                    index: "2",
+                    name: "fangfang",
+                    age: 32,
+                    address: "西湖区湖底公园2号",
+                    birthDate: "2020-03-01"
+                },
+                {
+                    index: "3",
+                    name: "lanlan",
+                    age: 45,
+                    address: "西湖区湖底公园3号",
+                    birthDate: "2020-03-01"
+                }
+            ]
+        }
+        const TEST = document.getElementById("cs")
+        TEST.onclick = () => {
+            // 新建excel文件，使用Exceljs生成，需先引入exceljs.min.js，FileSaver.min.js
+            let ExcelObj = new excelGenerator(ExcelJS, {
+                // 初始化表格行高，列宽
+                defaultSize: [15, 200],
+                // 是否添加表头
+                header: {
+                    title: 'QQ',
+                    style: {
+                        font: {
+                            name: 'Arial Black',
+                            color: { argb: '000000' },
+                            family: 2,
+                            size: 20,
+                            // italic: true
+                        },
+                        fill: {
+                            type: 'pattern',
+                            pattern: 'solid',
+                            fgColor: {
+                                argb: 'FFFFFF'
+                            },
+                            // bgColor: {
+                            //     argb: 'FFFFFF'
+                            // },
+                        },
+                        alignment: {
+                            vertical: 'middle',
+                            horizontal: 'center'
+                        }
+                    }
+                },
+                // 表格栏目对象
+                columns: state.columns,
+                // 表格资源对象
+                data: state.dataSource,
+                // excel文件保存名称
+                fileName: new Date().toLocaleDateString(),
+                // excel表格名称
+                sheetName: "sheet1",
+                // 合并范围，字符串"a1:a2",数组:[1,1,2,2]从1,1合并到2,2
+                merge: ["A3:A4"],
+                // 范围格式化，优先度高于cellstyle
+                rangeStyle: [
+                    {
+                        range: 'c1:E7',
+                        // excel 表格公式
+                        formulae: ['MOD(ROW(),2)=0'],//偶数行设置样式，又例如['MOD(ROW()+COLUMN(),2)=0']跟行列有关
+                        style: {
+                            fill: {
+                                type: 'pattern',
+                                pattern: 'solid',
+                                bgColor: { argb: 'FF00FF00' }
+                            },
+                            font: {
+                                name: 'Arial Black',
+                                color: { argb: '000000' },
+                                family: 2,
+                                size: 14,
+                                italic: true
+                            },
+                            alignment: {
+                                vertical: 'middle',
+                                horizontal: 'center'
+                            },
+                            border: {
+                                top: { style: 'double', color: { argb: '0' } },
+                                left: { style: 'single', color: { argb: '0' } },
+                                bottom: { style: 'dashed', color: { argb: '0' } },
+                                right: { style: 'double', color: { argb: '0' } }
+                            },
+                        }
+                    },
+                    {
+                        range: "A:Z",
+                        type: "cellIs",//cell值判断
+                        operator:"equal",//greaterThan,lessThan,between
+                        formulae: ["45"],
+                        style: {
+                            fill: {
+                                type: 'pattern',
+                                pattern: 'solid',
+                                bgColor: { argb: '60d2be' }
+                            }
+                        }
+                    },
+                    {
+                        range: "A:Z",
+                        type: "containsText",//cell包含判断
+                        operator:"containsText",//containsBlanks,notContainsBlanks,containsErrors，notContainsErrors
+                        text: "chenchen",
+                        style: {
+                            fill: {
+                                type: 'pattern',
+                                pattern: 'solid',
+                                bgColor: { argb: '9255db' }
+                            }
+                        }
+                    }
+                ],
+                // 特例格式化，优先度低于rangstyle,
+                cellStyle: [
+                    {
+                        type: "cell",//cell:单独一格；column：某列；row:某行
+                        range: "A3",
+                        style: {
+                            font: {
+                                size: 30,
+                            }
+                        }
+                    },
+                    {
+                        type: "row",
+                        range: 2,
+                        style: {
+                            font: {
+                                name: "宋体",
+                                size: 10,
+                            }
+                        }
+                    },
+                    {
+                        type: "column",//设置列样式的时候会影响标题行A1
+                        range: 3,
+                        style: {
+                            font: {
+                                name: "宋体",
+                                size: 10,
+                            },
+                            //'0.00%',数字格式化，只能用于cellStyle
+                            numFmt: "# ?/?"
+                        }
+                    }
+                ],
+                // 添加自动筛选范围
+                autoFilter: "A2:c2"
+            })
+            // 表格的遍历
+            ExcelObj.workSheet.eachRow(function (row, rowNumber) {
+                console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values));
+            });
+            ExcelObj.workSheet.getColumn(2).eachCell({ includeEmpty: true }, function (cell, colNumber) {
+                if (cell.value == '32') cell.value = "21"
+                cell.border = {
+                    // style:thin,dotted,dashDot,hair,dashDotDot,medium,double,thick
+                    top: { style: 'double', color: { argb: '6074d2' } },
+                    left: { style: 'double', color: { argb: '6074d2' } },
+                    bottom: { style: 'double', color: { argb: '6074d2' } },
+                    right: { style: 'double', color: { argb: '6074d2' } }
+                };
+                console.log('Cell ' + colNumber + ' = ' + cell.value);
+            });
+            // 销毁表格对象
+            // ExcelObj.destory()
+            // 表格下载成excel文件
+            ExcelObj.saveAsExls()
+        }
+
+    </script>
+</body>
+
+</html>
